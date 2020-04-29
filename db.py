@@ -63,7 +63,8 @@ def get_trip_cities(cursor, trip_id):
     trips_cities = cursor.fetchall()
     return trip_cities
 
-
+#PRE: SQL server is running with database 'trippity' existing
+#POST: returns the connection to the SQL server
 def getDbConnection():
     try:
         connection = mysql.connector.connect(host='localhost',
@@ -74,6 +75,9 @@ def getDbConnection():
     except mysql.connector.Error as error:
         print("Failed to connect to database {}".format(error))
 
+#PRE: SQL server must be connected
+#POST: SQL connection closed
+#PARAM: SQL server connection to be closed
 def closeDbConnection(connection):
     try:
         connection.close()
