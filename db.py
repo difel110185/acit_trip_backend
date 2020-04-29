@@ -1,33 +1,60 @@
 import os
 import mysql.connector
-import json
-import datetime
 from mysql.connector import Error
 from mysql.connector import errorcode
 
-#PRE: database connection established, countries table must exist in database
-#POST: inserts a country's name inside the database
-#PARAM: database connection, cursor for SQL database, name of country
-def insert_country(database_connection, cursor, country_name: str):
-    query = """INSERT INTO countries (name) VALUES (%s)"""
-    cursor.execute(query, (country_name,))
-    database_connection.commit()
 
 #PRE: database connection established, trips table must exist in database
 #POST: inserts trip into database
 #PARAM: database connection, cursor for SQL database, name of trip, description of trip, image location, country's ID
 def insert_trip(database_connection, cursor, name: str, description: str, image: str, country_id: int):
     query = """INSERT INTO trips (name, description, image, country_id) VALUES (%s, %s, %s, %s)"""
-    cursor.execute(query, (name, description, image, country_id))
-    database_connection.commit()
+    try:
+        cursor.execute(query, (name, description, image, country_id))
+        database_connection.commit()
+    except Error as e:
+        print("Error occured: ", e)
+        print("Trip not inserted")
 
 #PRE: database connection established, trip cities table must exist in database
 #POST: inserts trip cities into database
 #PARAM: database connection, cursor for SQL database, name of city, arrival time, departure time, associated trip ID
 def insert_trip_cities(database_connection, cursor, name: str, arrival: str, departure: str, trip_id: int):
     query = """INSERT INTO trip_cities (name, datetime_of_arrival, datetime_of_departure, trip_id)"""
-    cursor.execute(query, (name, arrival, departure, trip_id))
-    database_connection.commit()
+    try:
+        cursor.execute(query, (name, arrival, departure, trip_id))
+        database_connection.commit()
+    except Error as e:
+        print("Error occured: ", e)
+        print("Trip not inserted")
+
+#PRE: database connection established, trip must exist inside database
+#POST: deletes trip from database
+#PARAM: database connection, cursor for SQL database, name of trip
+def delete_trip(database_connection, cursor, trip_name: str):
+    query = """DELETE FROM trips WHERE name = %s"""
+    name = (trip_name,)
+    try:
+        cursor.execute(query, name)
+        database_connection.commit()
+        print(trip_name + " deleted from trips table")
+    except Error as e:
+        print("Error occured: ", e)
+        print(trip_name + " not deleted")
+
+#PRE: database connection established, at least one trip city must exist in database with corresponding trip_id
+#POST: deletes trip city from database
+#PARAM: database connection, cursor for SQL database, ID of trip
+def delete_trip_cities(database_connection, cursor, trip_id: int):
+    query = """DELETE FROM trip_cities WHERE trip_id = %s"""
+    id = (trip_id,)
+    try:
+        cursor.execute(query, id)
+        database_connection.commit()
+        print(trip_id + " deleted from trip cities table")
+    except Error as e:
+        print("Error occured: ", e)
+        print(trip_id + " not deleted")
 
 #PRE: database connection
 #POST: returns list of countries and their ID
@@ -71,7 +98,8 @@ def getDbConnection():
                                             database='trippity',
                                             user='root',
                                             password='')
-        return connection
+        cursor = connection.cursor()
+        return connection, cursor
     except mysql.connector.Error as error:
         print("Failed to connect to database {}".format(error))
 
