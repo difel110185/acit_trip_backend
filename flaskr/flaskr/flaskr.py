@@ -1,13 +1,18 @@
 # all the imports
 import os
-import sqlite3
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
-
 import mysql.connector
+
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
 from mysql.connector import Error
 from mysql.connector import errorcode
+from flask_swagger import swagger
+from flask_restplus import Resource, Api
+from werkzeug.debug import console
 
 app = Flask(__name__) # create the application instance :)
+api = Api(app, version='1.0')
+ns = api.namespace('simple', description='Im so confused')
+
 app.config.from_object(__name__) # load config from this file , flaskr.py
 
 # Load default config and override config from an environment variable
@@ -16,6 +21,7 @@ app.config.update(dict(
     USERNAME='root',
     PASSWORD='password'
 ))
+
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
 def connect_db():
@@ -40,18 +46,9 @@ def initdb_command():
     print('Initialized the database.')
 
 def get_db():
-    """Opens a new database connection if there is none yet for the
-    current application context."""
-    g.db = connect_db();
+    """Opens a new database connection"""
+    g.db = connect_db()
     return g.db
-
-@app.teardown_appcontext
-def close_db(error):
-    """Closes the database again at the end of the request."""
-    """
-    if hasattr(g, 'sqlite_db'):
-        g.sqlite_db.close()
-    """
 
 @app.route('/')
 def show_entries():
@@ -65,39 +62,18 @@ def show_entries():
     trips = cur.fetchall()
     return render_template('show_entries.html', countries=countries, cities=cities, trips=trips)
 
-@app.route('/add', methods=['POST'])
-def add_entry():
-    """
-    if not session.get('logged_in'):
-        abort(401)
-    db = get_db()
-    db.execute('insert into entries (title, text) values (?, ?)',
-                 [request.form['title'], request.form['text']])
-    db.commit()
-    flash('New entry was successfully posted')
-    return redirect(url_for('show_entries'))
-    """
+@ns.route('/trips')
+class Trips(Resource):
+    def get(self):
+        db = get_db()
+        cur = db.cursor()
+        cur.execute("""SELECT * FROM trips""")
+        trips = cur.fetchall()
+        console.log(trips)
+        return trips
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    """
-    error = None
-    if request.method == 'POST':
-        if request.form['username'] != app.config['USERNAME']:
-            error = 'Invalid username'
-        elif request.form['password'] != app.config['PASSWORD']:
-            error = 'Invalid password'
-        else:
-            session['logged_in'] = True
-            flash('You were logged in')
-            return redirect(url_for('show_entries'))
-    return render_template('login.html', error=error)
-    """
 
-@app.route('/logout')
-def logout():
-    """
-    session.pop('logged_in', None)
-    flash('You were logged out')
-    return redirect(url_for('show_entries'))
-    """
+@app.route('/trips/{id}')
+def all_trips():
+    tomato = ""
+    return tomato
