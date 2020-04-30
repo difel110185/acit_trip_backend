@@ -16,6 +16,7 @@ def insert_trip(database_connection, cursor, trip):
         print("Error occured: ", e)
         print("Trip not inserted")
 
+
 #PRE: database connection established, trip cities table must exist in database
 #POST: inserts trip cities into database
 #PARAM: database connection, cursor for SQL database, trip city dictionary
@@ -55,9 +56,10 @@ def delete_trip_city(database_connection, cursor, id: int):
         print("Error occured: ", e)
         print(id + " not deleted")
 
-#PRE: database connection
-#POST: returns list of countries and their ID
-#PARAM: cursor for SQL database
+
+# PRE: database connection
+# POST: returns list of countries and their ID
+# PARAM: cursor for SQL database
 def get_countries_list(cursor):
     query = """SELECT * FROM countries"""
     cursor.execute(query)
@@ -88,6 +90,7 @@ def get_trip(cursor, id: int):
     except Error as e:
         print("Error occured: ", e)
 
+
 #PRE: database connection, trip cities table exists
 #POST: returns list of trip cities of selected trip_id
 #PARAM: cursor for SQL database, ID of trip
@@ -95,7 +98,8 @@ def get_trip_cities_by_trip_id(cursor, trip_id):
     query = """SELECT * FROM trip_cities WHERE trip_id = %s"""
     cursor.execute(query, (trip_id,))
     trips_cities = cursor.fetchall()
-    return trip_cities
+    return trips_cities
+
 
 #PRE: database connection, trip cities table exists
 #POST: updates trip_cities defined by ID
@@ -136,9 +140,10 @@ def getDbConnection():
     except mysql.connector.Error as error:
         print("Failed to connect to database {}".format(error))
 
-#PRE: SQL server must be connected
-#POST: SQL connection closed
-#PARAM: SQL server connection to be closed
+
+# PRE: SQL server must be connected
+# POST: SQL connection closed
+# PARAM: SQL server connection to be closed
 def closeDbConnection(connection):
     try:
         connection.close()

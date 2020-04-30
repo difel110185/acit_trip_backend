@@ -1,0 +1,2 @@
+connexion==2.6.0
+Flask_Cors==3.0.8

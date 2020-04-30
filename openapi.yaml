@@ -1,0 +1,215 @@
+swagger: '2.0'
+info:
+  description: This is the Trippity API
+  version: 1.0.0
+  title: Trippity API
+
+paths:
+  /trips:
+    get:
+      summary: Returns all trips
+      operationId: app.get_trips
+      description: Returns all trips
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Trips retrieved successfully
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/TripListView"
+    post:
+      summary: Create a trip
+      operationId: app.create_trip
+      description: Create a trip
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body #Inside of Body
+          name: trip #Object Name
+          description: Trip object to be created
+          required: true
+          schema:
+            $ref: "#/definitions/Trip"
+      responses:
+        201:
+          description: Trip created successfully
+        400:
+          description: Invalid input
+  /trips/{id}:
+    get:
+      summary: Returns detailed information of a single trip
+      operationId: app.get_trip
+      description: Returns detailed information of a single trip
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of trip to be retrieved
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Trip retrieved successfully
+          schema:
+            $ref: "#/definitions/TripView"
+        404:
+          description: Trip not found
+    put:
+      summary: Updates a trip
+      operationId: app.update_trip
+      description: Updates a trip
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of trip to be deleted
+          required: true
+          type: integer
+        - in: body
+          name: trip
+          description: Trip object to be updated
+          required: true
+          schema:
+            $ref: "#/definitions/Trip"
+      responses:
+        200:
+          description: Trip updated successfully
+          schema:
+            $ref: "#/definitions/TripView"
+        400:
+          description: Invalid input
+        404:
+          description: Trip not found
+    delete:
+      summary: Deletes a trip
+      operationId: app.delete_trip
+      description: Deletes a trip
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of trip to be deleted
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Trip deleted successfully
+        404:
+          description: Trip not found
+
+definitions:
+  CountryView:
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+  CityView:
+    type: object
+    required:
+      - id
+      - name
+      - date_of_arrival
+      - date_of_departure
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      date_of_arrival:
+        type: string
+        format: date-time
+      date_of_departure:
+        type: string
+        format: date-time
+  City:
+    type: object
+    required:
+      - name
+      - date_of_arrival
+      - date_of_departure
+    properties:
+      name:
+        type: string
+      date_of_arrival:
+        type: string
+        format: date-time
+      date_of_departure:
+        type: string
+        format: date-time
+  TripView:
+    type: object
+    required:
+      - id
+      - name
+      - image
+      - country
+      - cities
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+      image:
+        type: string
+        format: byte
+      country:
+        $ref: "#/definitions/CountryView"
+      cities:
+        type: array
+        items:
+          $ref: "#/definitions/CityView"
+  TripListView:
+    type: object
+    required:
+      - id
+      - name
+      - image
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+      image:
+        type: string
+        format: byte
+  Trip:
+    type: object
+    required:
+      - name
+      - image
+      - country_id
+      - cities
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+      image:
+        type: string
+        format: byte
+      country_id:
+        type: integer
+      cities:
+        type: array
+        items:
+          $ref: "#/definitions/City"
