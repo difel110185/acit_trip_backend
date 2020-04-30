@@ -15,7 +15,7 @@ CREATE TABLE `trips` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `description` text,
-  `image` varchar(1000) NOT NULL,
+  `image` longtext NOT NULL,
   `country_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_country_idx` (`country_id`),
