@@ -34,7 +34,6 @@ def create_trip(trip):
     cur = connection.cursor()
     name = trip["name"]
     image = trip["image"]
-    id = trip["id"]
     description = trip["description"]
     country_id = trip["country_id"]
     db.insert_trip(connection, cur, name, description, image, country_id)
