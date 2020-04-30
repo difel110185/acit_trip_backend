@@ -66,13 +66,13 @@ def get_countries_list(cursor):
     return countries
 
 #PRE: database connection
-#POST: returns list of all trips OR array of all trips OF USER
-#PARAM: cursor for SQL database, username if specified
-def get_trips_list(cursor, name="_default_"):
+#POST: returns list of all trips and their ID OR trip of specified ID
+#PARAM: cursor for SQL database, ID if specified
+def get_trips_list(cursor, id=None):
     #choose name of trip
-    if (name != "_default_"):
-        query = """SELECT * FROM trips WHERE name = %s"""
-        cursor.execute(query, (name,))
+    if (id != None):
+        query = """SELECT * FROM trips WHERE id = %s"""
+        cursor.execute(query, (id,))
         trips_list = cursor.fetchall()
         return trips_list
     else:
