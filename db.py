@@ -90,6 +90,18 @@ def get_trip_cities(cursor, trip_id):
     trips_cities = cursor.fetchall()
     return trip_cities
 
+#PRE: database connection, trip cities table exists
+#POST: updates trip_cities defined by ID
+#PARAM: database connection, cursor for SQL database, arrival time, departure time, ID of trip_cities
+def update_trip_cities(database_connection, cursor, arrival, departure, id: int):
+    try:
+        query = """UPDATE trip_cities SET datetime_of_arrival = %s, datetime_of_departure = %s WHERE id= %s"""
+        cursor.execute(query, (arrival, departure, id,))
+        database_connection.commit()
+    except Error as e:
+        print("Error occured: ", e)
+        print("Trip cities ID: " + id + " not updated")
+
 #PRE: SQL server is running with database 'trippity' existing
 #POST: returns the connection to the SQL server
 def getDbConnection():
