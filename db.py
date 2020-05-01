@@ -38,10 +38,10 @@ def delete_trip(database_connection, cursor, id: int):
     try:
         cursor.execute(query, (id,))
         database_connection.commit()
-        print(trip_name + " deleted from trips table")
+        print("Trip ID: ", id, " deleted from trips table")
     except Error as e:
         print("Error occured: ", e)
-        print(trip_name + " not deleted")
+        print("Trip ID: ", id, " not deleted")
 
 #PRE: database connection established, at least one trip city must exist in database with corresponding trip_id
 #POST: deletes trip city from database
@@ -54,7 +54,7 @@ def delete_trip_city(database_connection, cursor, id: int):
         print(id + " deleted from trip cities table")
     except Error as e:
         print("Error occured: ", e)
-        print(id + " not deleted")
+        print(id, " not deleted")
 
 
 # PRE: database connection
