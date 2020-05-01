@@ -33,7 +33,7 @@ def insert_trip_cities(database_connection, cursor, trip_city):
 #POST: deletes trip from database
 #PARAM: database connection, cursor for SQL database, name of trip
 def delete_trip(database_connection, cursor, id: int):
-    query = """DELETE FROM trips WHERE id = %s"""
+    query = """DELETE FROM trips WHERE id = '%s'"""
     try:
         cursor.execute(query, (id,))
         database_connection.commit()
@@ -46,7 +46,7 @@ def delete_trip(database_connection, cursor, id: int):
 #POST: deletes trip city from database
 #PARAM: database connection, cursor for SQL database, ID of trip_city
 def delete_trip_city(database_connection, cursor, id: int):
-    query = """DELETE FROM trip_cities WHERE id = %s"""
+    query = """DELETE FROM trip_cities WHERE id = '%s'"""
     try:
         cursor.execute(query, (id,))
         database_connection.commit()
@@ -80,7 +80,7 @@ def get_trips_list(cursor):
 #POST: returns trip of specified ID
 #PARAM: cursor for SQL database, ID if specified
 def get_trip(cursor, id: int):
-    query = """SELECT * FROM trips WHERE id = %s"""
+    query = """SELECT * FROM trips WHERE id = '%s'"""
     try:
         cursor.execute(query, (id,))
         trip = cursor.fetchall()
@@ -92,7 +92,7 @@ def get_trip(cursor, id: int):
 #POST: returns list of trip cities of selected trip_id
 #PARAM: cursor for SQL database, ID of trip
 def get_trip_cities_by_trip_id(cursor, trip_id):
-    query = """SELECT * FROM trip_cities WHERE trip_id = %s"""
+    query = """SELECT * FROM trip_cities WHERE trip_id = '%s'"""
     cursor.execute(query, (trip_id,))
     trips_cities = cursor.fetchall()
     return trip_cities
@@ -101,7 +101,7 @@ def get_trip_cities_by_trip_id(cursor, trip_id):
 #POST: updates trip_cities defined by ID
 #PARAM: database connection, cursor for SQL database, trip_city detail in dictionary, ID of trip_cities
 def update_trip_cities(database_connection, cursor, trip_city, id: int):
-    query = """UPDATE trip_cities SET name = %s, datetime_of_arrival = %s, datetime_of_departure = %s WHERE id= %s"""
+    query = """UPDATE trip_cities SET name = %s, datetime_of_arrival = %s, datetime_of_departure = %s WHERE id= '%s'"""
     try:
         input = (trip_city['name'], trip_city['datetime_of_arrival'], trip_city['datetime_of_departure'], id,)
         cursor.execute(query, input)
@@ -114,7 +114,7 @@ def update_trip_cities(database_connection, cursor, trip_city, id: int):
 #POST: updates trip defined by ID
 #PARAM: database connection, cursor for SQL database, trip details in dictionary, ID of trip
 def update_trip(database_connection, cursor, trip, id):
-    query = """UPDATE trip SET name = %s, description = %s, image = %s, country_id = %s"""
+    query = """UPDATE trip SET name = %s, description = %s, image = %s, country_id = '%s'"""
     try:
         input = (trip['name'], trip['description'], trip['image'], trip['country_id'],)
         cursor.execute(query, input)
