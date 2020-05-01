@@ -29,37 +29,23 @@ def get_trips():
 
 
 def create_trip(trip):
-    connection = db.getDbConnection()
-    cur = connection.cursor()
-    name = trip["name"]
-    image = trip["image"]
-    description = trip["description"]
-    country_id = trip["country_id"]
-    db.insert_trip(connection, cur, name, description, image, country_id)
+    connection, cur = db.getDbConnection()
+    db.insert_trip(connection, cur, trip)
     return NoContent, 201
 
 #/trip/{id} Functions
 def get_trip(id):
-    connection = db.getDbConnection()
-    cur = connection.cursor()
-    trip = db.get_trips_list(cur, id)
+    connection, cur = db.getDbConnection()
+    trip = db.get_trip(cur, id)
     return trip, 200 #Return Empty String with Status Code 200
 
 def update_trip(id, trip):
-    connection = db.getDbConnection()
-    cur = connection.cursor()
-    cities = trip["cities"]
-    city = cities[0]
-    arrival = city["date_of_arrival"]
-    departure = city["date_of_departure"]
-    print(arrival)
-    print(departure)
-    blah = db.update_trip(connection, cur, arrival, departure, id)
+    connection, cur = db.getDbConnection()
+    blah = db.update_trip(connection, cur, trip, id)
     return blah, 200
 
 def delete_trip(id):
-    connection = db.getDbConnection()
-    cur = connection.cursor()
+    connection, cur = db.getDbConnection()
     tada = db.delete_trip(connection, cur, id)
     return tada, 200
 
