@@ -13,8 +13,7 @@ import db
 
 #/trip Functions
 def get_trips():
-    connection = db.getDbConnection()
-    cur = connection.cursor()
+    connection, cur = db.getDbConnection()
     trips = db.get_trips_list(cur)
     arrTrips = [];
     for each in trips:
