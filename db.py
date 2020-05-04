@@ -129,10 +129,10 @@ def update_trip(database_connection, cursor, trip, id):
 
 #PRE: SQL server is running with database 'trippity' existing
 #POST: returns the connection to the SQL server
-def getDbConnection():
+def getDbConnection(selectedDatabase):
     try:
         connection = mysql.connector.connect(host='localhost',
-                                            database='trippity',
+                                            database=selectedDatabase,
                                             user='root',
                                             password='')
         cursor = connection.cursor()
