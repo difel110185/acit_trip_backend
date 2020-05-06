@@ -31,7 +31,7 @@ def get_countries():
 def get_trips():
     connection, cur = db.getDbConnection(db_config)
     trips = db.get_trips_list(cur)
-    arrTrips = [];
+    arrTrips = []
     for each in trips:
         tempdict = {
             "description": each[2],
