@@ -122,32 +122,32 @@ definitions:
     required:
       - id
       - name
-      - date_of_arrival
-      - date_of_departure
+      - datetime_of_arrival
+      - datetime_of_departure
     properties:
       id:
         type: integer
       name:
         type: string
-      date_of_arrival:
+      datetime_of_arrival:
         type: string
         format: date-time
-      date_of_departure:
+      datetime_of_departure:
         type: string
         format: date-time
   City:
     type: object
     required:
       - name
-      - date_of_arrival
-      - date_of_departure
+      - datetime_of_arrival
+      - datetime_of_departure
     properties:
       name:
         type: string
-      date_of_arrival:
+      datetime_of_arrival:
         type: string
         format: date-time
-      date_of_departure:
+      datetime_of_departure:
         type: string
         format: date-time
   TripView:
@@ -198,8 +198,6 @@ definitions:
       - country_id
       - cities
     properties:
-      id:
-        type: integer
       name:
         type: string
       description:

@@ -27,10 +27,22 @@ def get_trips():
 
     return arrTrips, 200 #Return Empty String with Status Code 200
 
-
 def create_trip(trip):
     connection, cur = db.getDbConnection('testdb')
-    db.insert_trip(connection, cur, trip)
+    tripObj = {
+        "name": trip["name"],
+        "description": trip["description"],
+        "image":trip["image"],
+        "country_id":trip["country_id"]
+    }
+    cities = trip["cities"]
+    id = db.insert_trip(connection, cur, tripObj)
+    #Add trip ID to cities
+    for city in cities:
+        city["trip_id"] = id
+    for city in cities:
+        db.insert_trip_cities(connection, cur, city)
+
     return NoContent, 201
 
 #/trip/{id} Functions
@@ -62,15 +74,32 @@ def get_trip(id):
         "name"          :   trip[0][1],
         "description"   :   trip[0][2],
         "image"         :   trip[0][3],
-        "country"       : countryObj,
-        "cities"        : cities_list
+        "country"       :   countryObj,
+        "cities"        :   cities_list
     }
     return retObj, 200 #Return Empty String with Status Code 200
 
 def update_trip(id, trip):
     connection, cur = db.getDbConnection('testdb')
-    update = db.update_trip(connection, cur, trip, id)
-    return update, 200
+    tripObj = {
+        "name": trip["name"],
+        "description": trip["description"],
+        "image": trip["image"],
+        "country_id": trip["country_id"]
+    }
+    db.update_trip(connection, cur, tripObj, id)
+
+    cities = trip["cities"]
+    for city in cities:
+        city["trip_id"] = id
+        if "id" in city:
+            print("This city has an ID: ", city)
+            db.update_trip_cities(connection, cur, city, city["id"])
+        else:
+            print("This city does not have an ID: ", city)
+            db.insert_trip_cities(connection, cur, city)
+
+    return NoContent, 200
 
 def delete_trip(id):
     connection, cur = db.getDbConnection('testdb')
