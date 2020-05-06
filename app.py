@@ -15,7 +15,7 @@ import db
 def get_trips():
     connection, cur = db.getDbConnection()
     trips = db.get_trips_list(cur)
-    arrTrips = [];
+    arrTrips = []
     for each in trips:
         tempdict = {
             "description": each[2],
@@ -37,7 +37,7 @@ def create_trip(trip):
 def get_trip(id):
     connection, cur = db.getDbConnection()
     trip = db.get_trip(cur, id)
-    return trip, 200 #Return Empty String with Status Code 200
+    return trip, 200 # Return Empty String with Status Code 200
 
 def update_trip(id, trip):
     connection, cur = db.getDbConnection()
