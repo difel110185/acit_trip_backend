@@ -93,10 +93,8 @@ def update_trip(id, trip):
     for city in cities:
         city["trip_id"] = id
         if "id" in city:
-            print("This city has an ID: ", city)
             db.update_trip_cities(connection, cur, city, city["id"])
         else:
-            print("This city does not have an ID: ", city)
             db.insert_trip_cities(connection, cur, city)
 
     return NoContent, 200
