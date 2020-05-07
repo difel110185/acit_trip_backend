@@ -25,10 +25,7 @@ def get_currencyRates():
     currencyRates["Canadian dollar"] = 1
     return currencyRates
 
-def api_get_currency(cInput):
-    currencyIn = cInput[0]
-    value = cInput[1]
-    currencyOut = cInput[2]
+def api_get_currency(currencyIn, value, currencyOut):
     rates = get_currencyRates()
     if currencyIn in rates:
         if currencyOut in rates:
@@ -39,8 +36,8 @@ def api_get_currency(cInput):
                       + str(currencyOut) + " is " + str(rate) + "! " \
                       + str(value) + " " + str(currencyIn) + " is equal to " \
                       +  str(exchange) + " " + str(currencyOut) + "!"
-            print(outcome)
-            return rate, exchange
+            #print(outcome)
+            return rate
         else:
             error = str(currencyOut) + " is not accepted Currency!"
             return error
@@ -100,22 +97,31 @@ def get_forecast(city):
         weather_description = z[0]["description"]
 
         # print following values
-        print(" Temperature (in kelvin unit) = " +
-              str(current_temperature) +
-              "\n atmospheric pressure (in hPa unit) = " +
-              str(current_pressure) +
-              "\n humidity (in percentage) = " +
-              str(current_humidiy) +
-              "\n description = " +
-              str(weather_description))
-
+        #print(" Temperature (in kelvin unit) = " +
+        #      str(current_temperature) +
+        #      "\n atmospheric pressure (in hPa unit) = " +
+        #      str(current_pressure) +
+        #      "\n humidity (in percentage) = " +
+        #      str(current_humidiy) +
+        #      "\n description = " +
+        #      str(weather_description))
+        return current_temperature
     else:
         print(" City Not Found ")
 
-
+def get_acceptedCurrencies():
+    rates = get_currencyRates()
+    accepted = []
+    for each in rates:
+        accepted.append(each)
+    return accepted
 if __name__ == "__main__":
-    cInput = ["US dollar", 100, "Brazilian real"]
-    output = api_get_currency(cInput)
+    output = api_get_currency("Canadian dollar", 1, "Brazilian real")
     print(output)
+
+    currencies = get_acceptedCurrencies()
+    print(currencies)
+
     city = "Vancouver"
-    get_forecast(city)
+    temp = get_forecast(city)
+    print(temp)
