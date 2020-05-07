@@ -12,6 +12,7 @@ def insert_trip(database_connection, cursor, trip):
     try:
         cursor.execute(query,input)
         database_connection.commit()
+        return cursor.lastrowid
     except Error as e:
         print("Error occured: ", e)
         print("Trip not inserted")
