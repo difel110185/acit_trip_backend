@@ -81,6 +81,7 @@ def get_trip(id):
 
 def update_trip(id, trip):
     connection, cur = db.getDbConnection('testdb')
+    #break apart trip object into trip and cities
     tripObj = {
         "name": trip["name"],
         "description": trip["description"],
@@ -88,14 +89,17 @@ def update_trip(id, trip):
         "country_id": trip["country_id"]
     }
     db.update_trip(connection, cur, tripObj, id)
-
     cities = trip["cities"]
+
+    #remove existing cities and replace with new ones
+    cityList = db.get_trip_cities_by_trip_id(cur, id)
+    for city in cityList:
+        db.delete_trip_city(connection, cur, city[0])
+    #removed from here
+
     for city in cities:
         city["trip_id"] = id
-        if "id" in city:
-            db.update_trip_cities(connection, cur, city, city["id"])
-        else:
-            db.insert_trip_cities(connection, cur, city)
+        db.insert_trip_cities(connection, cur, city)
 
     return NoContent, 200
 
