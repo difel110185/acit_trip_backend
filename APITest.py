@@ -2,6 +2,8 @@ import app
 import mysql.connector
 import unittest
 import datetime
+
+
 class TestAPI(unittest.TestCase):
     """
     Test of functions in app.py
@@ -47,29 +49,31 @@ class TestAPI(unittest.TestCase):
             if self.assertEqual(key_chain, data_chain) and self.assertEqual(value_type, data_type):
                 self.assertTrue()
 
-
     def test_createTrip(self):
         """Test of app.create_trip(trip: str) -> NoContent, 201"""
         status_code = app.create_trip()
         self.assertEqual(status_code, 201)
 
-
     def test_getTrip(self):
-        """Test of app.get_trip(id: int) -> trip(type?), 200"""
+        """Test of app.get_trip(id: int) -> trip: dict, 200"""
         response, status_code = app.get_trip()
-        self.assertEqual(status_code, 200)
-
+        if self.assertIsInstance(response, dict, 'Argument is of wrong type')\
+                and self.assertEqual(status_code, 200, 'ERROR 404: File not found'):
+            self.assertTrue()
 
     def test_UpdateTrip(self):
-        """Test of app.update_trip(id: int, trip: str) -> str?, 200"""
+        """Test of app.update_trip(id: int, trip: str) -> str, 200"""
         response, status_code = app.update_trip()
-        self.assertEqual(status_code, 200)
-
+        if self.assertIsInstance(response, str, 'Argument is of wrong type')\
+                and self.assertEqual(status_code, 200, 'ERROR 404: File not found'):
+            self.assertTrue()
 
     def test_DeleteTrip(self):
-        """Test of app.delete_trip(id: int) -> str?, 200"""
+        """Test of app.delete_trip(id: int) -> str, 200"""
         response, status_code = app.delete_trip()
-        self.assertEqual(status_code, 200)
+        if self.assertIsInstance(response, str, 'Argument is of wrong type') \
+                and self.assertEqual(status_code, 200, 'ERROR 404: File not found'):
+            self.assertTrue()
 
 
 if __name__ == '__main__':
