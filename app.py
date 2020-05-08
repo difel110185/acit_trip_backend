@@ -1,7 +1,9 @@
 import connexion
 from connexion import NoContent
 from flask_cors import CORS
+from datetime import datetime
 import db
+import scraper
 
 
 db_config = {
@@ -79,9 +81,11 @@ def get_trip(id):
             "id"                    : city[0],
             "name"                  : city[1],
             "datetime_of_arrival"   : city[2].strftime("%Y-%m-%d %H:%M:%S"),
-            "datetime_of_departure" : city[3].strftime("%Y-%m-%d %H:%M:%S")
+            "datetime_of_departure" : city[3].strftime("%Y-%m-%d %H:%M:%S"),
+            "temperature_in_kelvin": scraper.get_forecast(city[1])
         }
         cities_list.append(obj)
+
 
     retObj = {
         "id"            :   trip[0][0],
