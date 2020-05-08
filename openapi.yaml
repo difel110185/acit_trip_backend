@@ -5,6 +5,20 @@ info:
   title: Trippity API
 
 paths:
+  /countries:
+    get:
+      summary: Returns all countries
+      operationId: app.get_countries
+      description: Returns all countries
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Countries retrieved successfully
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/CountryView"
   /trips:
     get:
       summary: Returns all trips
