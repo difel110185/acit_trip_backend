@@ -3,14 +3,11 @@ import mysql.connector
 import unittest
 import datetime
 class TestAPI(unittest.TestCase):
-    #Input: Nothing
-    #Output: List of Dictionaries Containing Trip Information
-    #Test: Does the Format equal what we want
+    """
+    Test of functions in app.py
+    """
     def test_getTrips(self):
-        """
-        Strips keys from input dict and mock dict, and asserts keys match
-        TODO: Match value data types
-        """
+        """Test of get_trips() -> [{}, {}, {}]"""
         type_dict = {
             "id": 0,
             "name": "string",
@@ -23,49 +20,54 @@ class TestAPI(unittest.TestCase):
                     "date_of_arrival": "2020-05-05T21:42:37.061Z",
                     "date_of_departure": "2020-05-05T21:42:37.061Z"
                 }
+
             ]
         }
 
         trip_list = app.get_trips()
-        trip_dict = trip_list[0]
+        for i in range(len(trip_list)):
+            trip_dict = trip_list[i]
 
-        key_chain = []
-        for key in trip_dict.keys:
-            key_chain.append(key)
+            key_chain = []
+            for key in trip_dict.keys():
+                key_chain.append(key)
 
-        data_chain = []
-        for key in type_dict.keys():
-            data_chain.append(key)
+            data_chain = []
+            for key in type_dict.keys():
+                data_chain.append(key)
 
-        self.assertEqual(key_chain, data_chain)
+            value_type = []
+            for value in trip_dict.values():
+                value_type.append(type(value))
 
-    #Input: Trip Information
-    #Output: Nothing
-    #Test: Does the Input Provide the Necessary Information in the Correct Format
+            data_type = []
+            for value in type_dict.values():
+                data_type.append(type(value))
+
+            if self.assertEqual(key_chain, data_chain) and self.assertEqual(value_type, data_type):
+                self.assertTrue()
+
+
     def test_createTrip(self):
+        """Test of app.create_trip(trip: str) -> NoContent, 201"""
         status_code = app.create_trip()
         self.assertEqual(status_code, 201)
 
 
-    #Input: ID of a Single Trip
-    #Output: Trip Information for the Trip with the Given ID
-    #Test: Is the Outputted Information that of Trip with the Given ID
     def test_getTrip(self):
-        """TODO Check Response for type str"""
+        """Test of app.get_trip(id: int) -> trip(type?), 200"""
         response, status_code = app.get_trip()
         self.assertEqual(status_code, 200)
 
-    #Input: ID of a Trip & Information
-    #Output: Nothing
-    #Test: Is the Info in Mysql changed for the Trip with the Given ID
+
     def test_UpdateTrip(self):
+        """Test of app.update_trip(id: int, trip: str) -> str?, 200"""
         response, status_code = app.update_trip()
         self.assertEqual(status_code, 200)
 
-    #Input: ID of a Trip
-    #Output: Nothing
-    #Test: Does the Mysql with Trip of given ID Exist?
+
     def test_DeleteTrip(self):
+        """Test of app.delete_trip(id: int) -> str?, 200"""
         response, status_code = app.delete_trip()
         self.assertEqual(status_code, 200)
 
