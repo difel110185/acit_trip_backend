@@ -105,7 +105,7 @@ def get_forecast(city):
         #      str(current_humidiy) +
         #      "\n description = " +
         #      str(weather_description))
-        return current_temperature
+        return current_temperature, weather_description
     else:
         print(" City Not Found ")
 

@@ -74,15 +74,16 @@ def get_trip(id):
                 "id" : country[0],
                 "name" : country[1]
             }
-
     cities_list = []
     for city in cities:
+        temp, temp_desc = scraper.get_forecast(city[1])
         obj = {
             "id"                    : city[0],
             "name"                  : city[1],
             "datetime_of_arrival"   : city[2].strftime("%Y-%m-%d %H:%M:%S"),
             "datetime_of_departure" : city[3].strftime("%Y-%m-%d %H:%M:%S"),
-            "temperature_in_kelvin": scraper.get_forecast(city[1])
+            "temperature_in_kelvin": temp,
+            "temp_desc": temp_desc
         }
         cities_list.append(obj)
 
