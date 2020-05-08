@@ -1,18 +1,24 @@
 import db
-import mysql.connector
 import unittest
-import datetime
+
 
 class TestTrippity(unittest.TestCase):
+    db_config = {
+        "host": "localhost",
+        "database": "testdb",
+        "user": "root",
+        "password": ""
+    }
+
     #WORKS
     def test_Connection(self):
-        connection, cursor = db.getDbConnection()
+        connection, cursor = db.getDbConnection(self.db_config)
         self.assertTrue(connection)
         self.assertTrue(cursor)
 
     # WORKS
     def test_tripInsertDelete(self):
-        connection, cursor = db.getDbConnection()
+        connection, cursor = db.getDbConnection(self.db_config)
         trip_mock = {
             'name': 'First trip',
             'description': 'This is the first trip.',
@@ -31,7 +37,7 @@ class TestTrippity(unittest.TestCase):
 
     # WORKS
     def test_trip_citiesInsertDelete(self):
-        connection, cursor = db.getDbConnection()
+        connection, cursor = db.getDbConnection(self.db_config)
 
         trip_mock = {
             'name': 'First trip',
@@ -66,7 +72,7 @@ class TestTrippity(unittest.TestCase):
 
     # WORKS
     def test_getTripsList(self):
-        connection, cursor = db.getDbConnection()
+        connection, cursor = db.getDbConnection(self.db_config)
         trip1_mock = {
             'name': 'First trip',
             'description': 'This is the first trip.',
@@ -93,7 +99,7 @@ class TestTrippity(unittest.TestCase):
 
     # WORKS
     def test_updateTrip(self):
-        connection, cursor = db.getDbConnection()
+        connection, cursor = db.getDbConnection(self.db_config)
         trip_original = {
             'name' : 'Original',
             'description' : 'Unchanged',
@@ -122,7 +128,7 @@ class TestTrippity(unittest.TestCase):
 
     # WORKS
     def test_updateTripCity(self):
-        connection, cursor = db.getDbConnection()
+        connection, cursor = db.getDbConnection(self.db_config)
         trip_mock = {
             'name': 'First trip',
             'description': 'This is the first trip.',
@@ -161,7 +167,7 @@ class TestTrippity(unittest.TestCase):
         db.delete_trip(connection, cursor, tripID)
 
     def test_getTrip(self):
-        connection, cursor = db.getDbConnection()
+        connection, cursor = db.getDbConnection(self.db_config)
         trip_mock = {
             'name': 'First trip',
             'description': 'This is the first trip.',
