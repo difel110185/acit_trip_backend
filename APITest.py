@@ -46,34 +46,31 @@ class TestAPI(unittest.TestCase):
             for value in type_dict.values():
                 data_type.append(type(value))
 
-            if self.assertEqual(key_chain, data_chain) and self.assertEqual(value_type, data_type):
-                self.assertTrue()
+            self.assertEqual(key_chain, data_chain)
+            self.assertEqual(value_type, data_type)
 
     def test_createTrip(self):
         """Test of app.create_trip(trip: str) -> NoContent, 201"""
-        status_code = app.create_trip()
+        no_content, status_code = app.create_trip()
         self.assertEqual(status_code, 201)
 
     def test_getTrip(self):
         """Test of app.get_trip(id: int) -> trip: dict, 200"""
         response, status_code = app.get_trip()
-        if self.assertIsInstance(response, dict, 'Argument is of wrong type')\
-                and self.assertEqual(status_code, 200, 'ERROR 404: File not found'):
-            self.assertTrue()
+        self.assertIsInstance(response, dict, 'Argument is of wrong type')
+        self.assertEqual(status_code, 200, 'ERROR 404: File not found')
 
     def test_UpdateTrip(self):
         """Test of app.update_trip(id: int, trip: str) -> str, 200"""
         response, status_code = app.update_trip()
-        if self.assertIsInstance(response, str, 'Argument is of wrong type')\
-                and self.assertEqual(status_code, 200, 'ERROR 404: File not found'):
-            self.assertTrue()
+        self.assertIsInstance(response, str, 'Argument is of wrong type')
+        self.assertEqual(status_code, 200, 'ERROR 404: File not found')
 
     def test_DeleteTrip(self):
         """Test of app.delete_trip(id: int) -> str, 200"""
         response, status_code = app.delete_trip()
-        if self.assertIsInstance(response, str, 'Argument is of wrong type') \
-                and self.assertEqual(status_code, 200, 'ERROR 404: File not found'):
-            self.assertTrue()
+        self.assertIsInstance(response, str, 'Argument is of wrong type')
+        self.assertEqual(status_code, 200, 'ERROR 404: File not found')
 
 
 if __name__ == '__main__':
