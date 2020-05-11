@@ -12,6 +12,7 @@ def insert_trip(database_connection, cursor, trip):
     try:
         cursor.execute(query,input)
         database_connection.commit()
+        return cursor.lastrowid
     except Error as e:
         print("Error occured: ", e)
         print("Trip not inserted")
@@ -129,12 +130,12 @@ def update_trip(database_connection, cursor, trip, id):
 
 #PRE: SQL server is running with database 'trippity' existing
 #POST: returns the connection to the SQL server
-def getDbConnection(selectedDatabase):
+def getDbConnection(db_config):
     try:
-        connection = mysql.connector.connect(host='localhost',
-                                            database=selectedDatabase,
-                                            user='root',
-                                            password='')
+        connection = mysql.connector.connect(host=db_config["host"],
+                                            database=db_config["database"],
+                                            user=db_config["user"],
+                                            password=db_config["password"])
         cursor = connection.cursor()
         return connection, cursor
     except mysql.connector.Error as error:
