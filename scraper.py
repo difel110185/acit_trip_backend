@@ -5,6 +5,7 @@ from requests.exceptions import RequestException
 from contextlib import closing
 from bs4 import BeautifulSoup
 
+
 def get_currencyRates():
     currencyRates = {}
     URL = 'http://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/'
@@ -25,6 +26,7 @@ def get_currencyRates():
     currencyRates["Canadian dollar"] = 1
     return currencyRates
 
+
 def api_get_currency(currencyIn, value, currencyOut):
     rates = get_currencyRates()
     if currencyIn in rates:
@@ -44,6 +46,7 @@ def api_get_currency(currencyIn, value, currencyOut):
     else:
         error = str(currencyIn) + " is not accepted Currency!"
         return error
+
 
 def get_forecast(city):
     # Enter your API key here
@@ -109,12 +112,15 @@ def get_forecast(city):
     else:
         print(" City Not Found ")
 
+
 def get_acceptedCurrencies():
     rates = get_currencyRates()
     accepted = []
     for each in rates:
         accepted.append(each)
     return accepted
+
+
 if __name__ == "__main__":
     output = api_get_currency("Canadian dollar", 1, "Brazilian real")
     print(output)
