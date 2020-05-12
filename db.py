@@ -2,11 +2,11 @@ import mysql.connector
 from mysql.connector import Error
 
 
-def insert_trip(database_connection, cursor, trip):
-    query = """INSERT INTO trips (name, description, image, country_id) VALUES (%s, %s, %s, %s)"""
+def insert_trip(database_connection, cursor, trip, email):
+    query = """INSERT INTO trips (name, description, image, country_id, user_id) VALUES (%s, %s, %s, %s, (SELECT id FROM users WHERE email = %s))"""
 
     try:
-        cursor.execute(query, (trip['name'], trip['description'], trip['image'], trip['country_id'],))
+        cursor.execute(query, (trip['name'], trip['description'], trip['image'], trip['country_id'], email))
         database_connection.commit()
         return cursor.lastrowid
     except Error as e:

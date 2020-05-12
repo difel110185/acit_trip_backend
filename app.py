@@ -88,6 +88,8 @@ def get_trips():
 
 def create_trip(body):
     connection, cur = db.get_db_connection(db_config)
+    email = decode_token(connexion.request.headers['Authorization'].split(" ")[1])["email"]
+
     trip_obj = {
         "name": body["name"],
         "description": body["description"],
@@ -95,7 +97,7 @@ def create_trip(body):
         "country_id": body["country_id"]
     }
     cities = body["cities"]
-    id = db.insert_trip(connection, cur, trip_obj)
+    id = db.insert_trip(connection, cur, trip_obj, email)
 
     for city in cities:
         city["trip_id"] = id
