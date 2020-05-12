@@ -37,11 +37,11 @@ def insert_trip_cities(database_connection, cursor, trip_city):
         print("City not inserted")
 
 
-def delete_trip(database_connection, cursor, id: int):
-    query = """DELETE FROM trips WHERE id = '%s'"""
+def delete_trip(database_connection, cursor, id: int, email):
+    query = """DELETE FROM trips WHERE id = %s and user_id = (SELECT id FROM users WHERE email = %s)"""
 
     try:
-        cursor.execute(query, (id,))
+        cursor.execute(query, (id, email, ))
         database_connection.commit()
         print("Trip ID: ", id, " deleted from trips table")
     except Error as e:
@@ -72,22 +72,22 @@ def get_countries_list(cursor):
         print("Error occurred: ", e)
 
 
-def get_trips_list(cursor):
-    query = """SELECT * FROM trips"""
+def get_trips_list(cursor, email):
+    query = """SELECT * FROM trips WHERE user_id = (SELECT id FROM users WHERE email = %s)"""
 
     try:
-        cursor.execute(query)
+        cursor.execute(query, (email, ))
         trips_list = cursor.fetchall()
         return trips_list
     except Error as e:
         print("Error occurred: ", e)
 
 
-def get_trip(cursor, id: int):
-    query = """SELECT * FROM trips WHERE id = '%s'"""
+def get_trip(cursor, id: int, email):
+    query = """SELECT * FROM trips WHERE id = %s and user_id = (SELECT id FROM users WHERE email = %s)"""
 
     try:
-        cursor.execute(query, (id,))
+        cursor.execute(query, (id, email, ))
         trip = cursor.fetchall()
         return trip
     except Error as e:
@@ -127,11 +127,11 @@ def update_trip_cities(database_connection, cursor, trip_city, id: int):
         print("Trip cities ID: ", id, " not updated")
 
 
-def update_trip(database_connection, cursor, trip, id):
-    query = """UPDATE trips SET name = %s, description = %s, image = %s, country_id = '%s' WHERE id = '%s'"""
+def update_trip(database_connection, cursor, trip, id, email):
+    query = """UPDATE trips SET name = %s, description = %s, image = %s, country_id = '%s' WHERE id = %s and user_id = (SELECT id FROM users WHERE email = %s)"""
 
     try:
-        cursor.execute(query, (trip['name'], trip['description'], trip['image'], trip['country_id'], id,))
+        cursor.execute(query, (trip['name'], trip['description'], trip['image'], trip['country_id'], id, email, ))
         database_connection.commit()
     except Error as e:
         print("Error occurred: ", e)

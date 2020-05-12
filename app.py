@@ -72,7 +72,9 @@ def get_countries():
 
 def get_trips():
     connection, cur = db.get_db_connection(db_config)
-    trips = db.get_trips_list(cur)
+    email = decode_token(connexion.request.headers['Authorization'].split(" ")[1])["email"]
+
+    trips = db.get_trips_list(cur, email)
 
     arr_trips = []
     for trip in trips:
@@ -108,50 +110,58 @@ def create_trip(body):
 
 def get_trip(id):
     connection, cur = db.get_db_connection(db_config)
-    trip = db.get_trip(cur, id)
-    cities = db.get_trip_cities_by_trip_id(cur, id)
-    countries = db.get_countries_list(cur)
-    country_obj = {}
-    for country in countries:
-        if (country[0] == trip[0][4]):   #If country ID == trip's country ID
-            country_obj = {
-                "id" : country[0],
-                "name" : country[1]
+    email = decode_token(connexion.request.headers['Authorization'].split(" ")[1])["email"]
+
+    trip = db.get_trip(cur, id, email)
+    if trip is not None and len(trip) > 0:
+        cities = db.get_trip_cities_by_trip_id(cur, id)
+        countries = db.get_countries_list(cur)
+        country_obj = {}
+        for country in countries:
+            if (country[0] == trip[0][4]):
+                country_obj = {
+                    "id" : country[0],
+                    "name" : country[1]
+                }
+        cities_list = []
+        for city in cities:
+            temp, temp_desc = scraper.get_forecast(city[1])
+            obj = {
+                "id"                    : city[0],
+                "name"                  : city[1],
+                "datetime_of_arrival"   : city[2].strftime("%Y-%m-%d %H:%M:%S"),
+                "datetime_of_departure" : city[3].strftime("%Y-%m-%d %H:%M:%S"),
+                "temperature_in_kelvin": temp,
+                "temp_desc": temp_desc
             }
-    cities_list = []
-    for city in cities:
-        temp, temp_desc = scraper.get_forecast(city[1])
-        obj = {
-            "id"                    : city[0],
-            "name"                  : city[1],
-            "datetime_of_arrival"   : city[2].strftime("%Y-%m-%d %H:%M:%S"),
-            "datetime_of_departure" : city[3].strftime("%Y-%m-%d %H:%M:%S"),
-            "temperature_in_kelvin": temp,
-            "temp_desc": temp_desc
+            cities_list.append(obj)
+
+
+        ret_obj = {
+            "id"            :   trip[0][0],
+            "name"          :   trip[0][1],
+            "description"   :   trip[0][2],
+            "image"         :   trip[0][3],
+            "country"       :   country_obj,
+            "cities"        :   cities_list
         }
-        cities_list.append(obj)
 
+        return ret_obj, 200
 
-    ret_obj = {
-        "id"            :   trip[0][0],
-        "name"          :   trip[0][1],
-        "description"   :   trip[0][2],
-        "image"         :   trip[0][3],
-        "country"       :   country_obj,
-        "cities"        :   cities_list
-    }
-    return ret_obj, 200
+    return NoContent, 404
 
 
 def update_trip(id, body):
     connection, cur = db.get_db_connection(db_config)
+    email = decode_token(connexion.request.headers['Authorization'].split(" ")[1])["email"]
+
     trip_obj = {
         "name": body["name"],
         "description": body["description"],
         "image": body["image"],
         "country_id": body["country_id"]
     }
-    db.update_trip(connection, cur, trip_obj, id)
+    db.update_trip(connection, cur, trip_obj, id, email)
     cities = body["cities"]
 
     city_list = db.get_trip_cities_by_trip_id(cur, id)
@@ -167,7 +177,9 @@ def update_trip(id, body):
 
 def delete_trip(id):
     connection, cur = db.get_db_connection(db_config)
-    delete = db.delete_trip(connection, cur, id)
+    email = decode_token(connexion.request.headers['Authorization'].split(" ")[1])["email"]
+
+    delete = db.delete_trip(connection, cur, id, email)
     return delete, 200
 
 
