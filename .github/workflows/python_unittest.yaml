@@ -1,0 +1,28 @@
+name: Python CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.7
+          uses: actions/setup-python@v2
+          with:
+            python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: setup mysql
+        - uses: mirromutth/mysql-action@v1.1
+          with:
+            mysql database: 'testdb'
+            mysql user: 'trippity'
+            mysql password: '123456'
+      - name: Tests
+        run: |
+          python appTest.py

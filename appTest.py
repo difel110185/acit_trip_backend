@@ -35,8 +35,8 @@ class TestAPI(unittest.TestCase):
     dbConfig = {
         "host": "localhost",
         "database": "testdb",
-        "user": "root",
-        "password": ""
+        "user": "tripitty",
+        "password": "123456"
     }
     def getAllTripIDs(self):
         connection, cursor = db.get_db_connection(self.dbConfig)
