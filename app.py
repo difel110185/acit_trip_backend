@@ -1,19 +1,13 @@
 import bcrypt
 import connexion
 from connexion import NoContent
+from flask import current_app
 from flask_cors import CORS
 import db
 import scraper
 import jwt
 import six
 from werkzeug.exceptions import Unauthorized
-
-db_config = {
-    "host": "192.168.10.10",
-    "database": "trippity",
-    "user": "homestead",
-    "password": "secret"
-}
 
 auth_config = {
     "jwt_secret": "trippitySecret2020"
@@ -32,21 +26,19 @@ def decode_token(token):
 
 
 def create_user(body):
-    connection, cur = db.get_db_connection(db_config)
     user_obj = {
         "name": body["name"],
         "email": body["email"],
         "password": bcrypt.hashpw(body["password"].encode('utf-8'), bcrypt.gensalt())
     }
 
-    db.insert_user(connection, cur, user_obj)
+    current_app.config["DATABASE"].insert_user(user_obj)
 
     return {"bearer_token": generate_token(body["email"]).decode()}, 201
 
 
 def login(body):
-    connection, cur = db.get_db_connection(db_config)
-    user = db.get_user_by_email(cur, body["email"])
+    user = current_app.config["DATABASE"].get_user_by_email(body["email"])
 
     if user is None or len(user) == 0:
         return NoContent, 404
@@ -58,9 +50,10 @@ def login(body):
 
 
 def get_countries():
-    connection, cur = db.get_db_connection(db_config)
-    countries = db.get_countries_list(cur)
+    countries = current_app.config["DATABASE"].get_countries_list()
+
     arr_countries = []
+
     for country in countries:
         arr_countries.append({
             "id": country[0],
@@ -71,10 +64,9 @@ def get_countries():
 
 
 def get_trips():
-    connection, cur = db.get_db_connection(db_config)
     email = decode_token(connexion.request.headers['Authorization'].split(" ")[1])["email"]
 
-    trips = db.get_trips_list(cur, email)
+    trips = current_app.config["DATABASE"].get_trips_list(email)
 
     arr_trips = []
     for trip in trips:
@@ -89,7 +81,6 @@ def get_trips():
 
 
 def create_trip(body):
-    connection, cur = db.get_db_connection(db_config)
     email = decode_token(connexion.request.headers['Authorization'].split(" ")[1])["email"]
 
     trip_obj = {
@@ -99,23 +90,22 @@ def create_trip(body):
         "country_id": body["country_id"]
     }
     cities = body["cities"]
-    id = db.insert_trip(connection, cur, trip_obj, email)
+    id = current_app.config["DATABASE"].insert_trip(trip_obj, email)
 
     for city in cities:
         city["trip_id"] = id
-        db.insert_trip_cities(connection, cur, city)
+        current_app.config["DATABASE"].insert_trip_cities(city)
 
     return NoContent, 201
 
 
 def get_trip(id):
-    connection, cur = db.get_db_connection(db_config)
     email = decode_token(connexion.request.headers['Authorization'].split(" ")[1])["email"]
 
-    trip = db.get_trip(cur, id, email)
+    trip = current_app.config["DATABASE"].get_trip(id, email)
     if trip is not None and len(trip) > 0:
-        cities = db.get_trip_cities_by_trip_id(cur, id)
-        countries = db.get_countries_list(cur)
+        cities = current_app.config["DATABASE"].get_trip_cities_by_trip_id(id)
+        countries = current_app.config["DATABASE"].get_countries_list()
         country_obj = {}
         for country in countries:
             if (country[0] == trip[0][4]):
@@ -152,8 +142,11 @@ def get_trip(id):
 
 
 def update_trip(id, body):
-    connection, cur = db.get_db_connection(db_config)
     email = decode_token(connexion.request.headers['Authorization'].split(" ")[1])["email"]
+
+    trip = current_app.config["DATABASE"].get_trip(id, email)
+    if trip is None or len(trip) == 0:
+        return NoContent, 404
 
     trip_obj = {
         "name": body["name"],
@@ -161,32 +154,37 @@ def update_trip(id, body):
         "image": body["image"],
         "country_id": body["country_id"]
     }
-    db.update_trip(connection, cur, trip_obj, id, email)
+    current_app.config["DATABASE"].update_trip(trip_obj, id, email)
     cities = body["cities"]
 
-    city_list = db.get_trip_cities_by_trip_id(cur, id)
+    city_list = current_app.config["DATABASE"].get_trip_cities_by_trip_id(id)
     for city in city_list:
-        db.delete_trip_city(connection, cur, city[0])
+        current_app.config["DATABASE"].delete_trip_city(city[0])
 
     for city in cities:
         city["trip_id"] = id
-        db.insert_trip_cities(connection, cur, city)
+        current_app.config["DATABASE"].insert_trip_cities(city)
 
     return NoContent, 200
 
 
 def delete_trip(id):
-    connection, cur = db.get_db_connection(db_config)
     email = decode_token(connexion.request.headers['Authorization'].split(" ")[1])["email"]
 
-    delete = db.delete_trip(connection, cur, id, email)
-    return delete, 200
+    trip = current_app.config["DATABASE"].get_trip(id, email)
+    if trip is None or len(trip) == 0:
+        return NoContent, 404
+
+    current_app.config["DATABASE"].delete_trip(id, email)
+
+    return NoContent, 200
 
 
 app = connexion.FlaskApp(__name__, specification_dir="")
 CORS(app.app)
 app.app.config['CORS_HEADERS'] = 'Content-Type'
 app.add_api("openapi.yaml")
+app.app.config['DATABASE'] = db
 
 if __name__ == "__main__":
     app.run(port=8080)
