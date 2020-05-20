@@ -1,16 +1,9 @@
 import mysql.connector
 from mysql.connector import Error
 
-db_config = {
-    "host": "192.168.10.10",
-    "database": "trippity",
-    "user": "homestead",
-    "password": "secret"
-}
-
 
 def insert_trip(trip, email):
-    connection, cursor = get_db_connection(db_config)
+    connection, cursor = get_db_connection()
 
     query = """INSERT INTO trips (name, description, image, country_id, user_id) VALUES (%s, %s, %s, %s, (SELECT id FROM users WHERE email = %s))"""
 
@@ -24,7 +17,7 @@ def insert_trip(trip, email):
 
 
 def insert_user(user):
-    connection, cursor = get_db_connection(db_config)
+    connection, cursor = get_db_connection()
 
     query = """INSERT INTO users (name, email, password) VALUES (%s, %s, %s)"""
 
@@ -38,7 +31,7 @@ def insert_user(user):
 
 
 def insert_trip_cities(trip_city):
-    connection, cursor = get_db_connection(db_config)
+    connection, cursor = get_db_connection()
 
     query = """INSERT INTO trip_cities (name, datetime_of_arrival, datetime_of_departure, trip_id) VALUES (%s, %s, %s, '%s')"""
 
@@ -51,7 +44,7 @@ def insert_trip_cities(trip_city):
 
 
 def delete_trip(id: int, email):
-    connection, cursor = get_db_connection(db_config)
+    connection, cursor = get_db_connection()
 
     query = """DELETE FROM trips WHERE id = %s and user_id = (SELECT id FROM users WHERE email = %s)"""
 
@@ -65,7 +58,7 @@ def delete_trip(id: int, email):
 
 
 def delete_trip_city(id: int):
-    connection, cursor = get_db_connection(db_config)
+    connection, cursor = get_db_connection()
 
     query = """DELETE FROM trip_cities WHERE id = '%s'"""
 
@@ -79,7 +72,7 @@ def delete_trip_city(id: int):
 
 
 def get_countries_list():
-    connection, cursor = get_db_connection(db_config)
+    connection, cursor = get_db_connection()
 
     query = """SELECT * FROM countries"""
 
@@ -92,7 +85,7 @@ def get_countries_list():
 
 
 def get_trips_list(email):
-    connection, cursor = get_db_connection(db_config)
+    connection, cursor = get_db_connection()
 
     query = """SELECT * FROM trips WHERE user_id = (SELECT id FROM users WHERE email = %s)"""
 
@@ -105,7 +98,7 @@ def get_trips_list(email):
 
 
 def get_trip(id: int, email):
-    connection, cursor = get_db_connection(db_config)
+    connection, cursor = get_db_connection()
 
     query = """SELECT * FROM trips WHERE id = %s and user_id = (SELECT id FROM users WHERE email = %s)"""
 
@@ -118,7 +111,7 @@ def get_trip(id: int, email):
 
 
 def get_user_by_email(email):
-    connection, cursor = get_db_connection(db_config)
+    connection, cursor = get_db_connection()
 
     query = """SELECT * FROM users WHERE email = %s"""
 
@@ -131,7 +124,7 @@ def get_user_by_email(email):
 
 
 def get_trip_cities_by_trip_id(trip_id):
-    connection, cursor = get_db_connection(db_config)
+    connection, cursor = get_db_connection()
 
     query = """SELECT * FROM trip_cities WHERE trip_id = '%s'"""
 
@@ -144,7 +137,7 @@ def get_trip_cities_by_trip_id(trip_id):
 
 
 def update_trip_cities(trip_city, id: int):
-    connection, cursor = get_db_connection(db_config)
+    connection, cursor = get_db_connection()
 
     query = """UPDATE trip_cities SET name = %s, datetime_of_arrival = %s, datetime_of_departure = %s WHERE id= '%s'"""
 
@@ -157,7 +150,7 @@ def update_trip_cities(trip_city, id: int):
 
 
 def update_trip(trip, id, email):
-    connection, cursor = get_db_connection(db_config)
+    connection, cursor = get_db_connection()
 
     query = """UPDATE trips SET name = %s, description = %s, image = %s, country_id = '%s' WHERE id = %s and user_id = (SELECT id FROM users WHERE email = %s)"""
 
@@ -170,6 +163,13 @@ def update_trip(trip, id, email):
 
 
 def get_db_connection():
+    db_config = {
+        "host": "192.168.10.10",
+        "database": "trippity",
+        "user": "homestead",
+        "password": "secret"
+    }
+
     try:
         connection = mysql.connector.connect(host=db_config["host"],
                                             database=db_config["database"],
