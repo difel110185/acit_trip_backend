@@ -1,0 +1,326 @@
+openapi: 3.0.0
+info:
+  description: This is the Trippity API
+  version: "1.0.0-oas3"
+  title: Trippity API
+paths:
+  /users:
+    post:
+      summary: Create an user
+      operationId: app.create_user
+      description: Create an user
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Invalid input
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: User object to be created
+        required: true
+  /login:
+    post:
+      summary: Logs the user in
+      operationId: app.login
+      description: Logs the user in
+      responses:
+        '201':
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Invalid input
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+        description: Email
+        required: true
+  /countries:
+    get:
+      summary: Returns all countries
+      operationId: app.get_countries
+      description: Returns all countries
+      security:
+        - jwt: []
+      responses:
+        '200':
+          description: Countries retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CountryView'
+        '401':
+          description: Access token is missing or invalid
+  /trips:
+    get:
+      summary: Returns all trips
+      operationId: app.get_trips
+      description: Returns all trips
+      security:
+        - jwt: []
+      responses:
+        '200':
+          description: Trips retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TripListView'
+        '401':
+          description: Access token is missing or invalid
+    post:
+      summary: Create a trip
+      operationId: app.create_trip
+      description: Create a trip
+      security:
+        - jwt: []
+      responses:
+        '201':
+          description: Trip created successfully
+        '400':
+          description: Invalid input
+        '401':
+          description: Access token is missing or invalid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trip'
+        description: Trip object to be created
+        required: true
+  '/trips/{id}':
+    get:
+      summary: Returns detailed information of a single trip
+      operationId: app.get_trip
+      description: Returns detailed information of a single trip
+      security:
+        - jwt: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of trip to be retrieved
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Trip retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripView'
+        '401':
+          description: Access token is missing or invalid
+        '404':
+          description: Trip not found
+    put:
+      summary: Updates a trip
+      operationId: app.update_trip
+      description: Updates a trip
+      security:
+        - jwt: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of trip to be deleted
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Trip updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripView'
+        '400':
+          description: Invalid input
+        '401':
+          description: Access token is missing or invalid
+        '404':
+          description: Trip not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trip'
+        description: Trip object to be updated
+        required: true
+    delete:
+      summary: Deletes a trip
+      operationId: app.delete_trip
+      description: Deletes a trip
+      security:
+        - jwt: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of trip to be deleted
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Trip deleted successfully
+        '401':
+          description: Access token is missing or invalid
+        '404':
+          description: Trip not found
+components:
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: app.decode_token
+  schemas:
+    CountryView:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    CityView:
+      type: object
+      required:
+        - id
+        - name
+        - datetime_of_arrival
+        - datetime_of_departure
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        datetime_of_arrival:
+          type: string
+          format: date-time
+        datetime_of_departure:
+          type: string
+          format: date-time
+    City:
+      type: object
+      required:
+        - name
+        - datetime_of_arrival
+        - datetime_of_departure
+      properties:
+        name:
+          type: string
+        datetime_of_arrival:
+          type: string
+          format: date-time
+        datetime_of_departure:
+          type: string
+          format: date-time
+    TripView:
+      type: object
+      required:
+        - id
+        - name
+        - image
+        - country
+        - cities
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+          format: byte
+        country:
+          $ref: '#/components/schemas/CountryView'
+        cities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CityView'
+    TripListView:
+      type: object
+      required:
+        - id
+        - name
+        - image
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+          format: byte
+    Trip:
+      type: object
+      required:
+        - name
+        - image
+        - country_id
+        - cities
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+          format: byte
+        country_id:
+          type: integer
+        cities:
+          type: array
+          items:
+            $ref: '#/components/schemas/City'
+    User:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    Login:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      required:
+        - bearer_token
+      properties:
+        bearer_token:
+          type: string
