@@ -117,6 +117,15 @@ def get_trip(id):
         cities_list = []
         for city in cities:
             yelp = amenitites.info(city[1])
+            if yelp == None:
+                yelp = {
+                    "location": "Country not Supported",
+                    "name": "Country not Supported",
+                    "phone": "Country not Supported",
+                    "price": "Country not Supported",
+                    "rating": "Country not Supported",
+                    "url": "",
+                }
             temp, temp_desc = scraper.get_forecast(city[1])
             obj = {
                 "id"                    : city[0],
