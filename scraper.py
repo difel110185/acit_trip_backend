@@ -170,9 +170,9 @@ def api_get_currency(currencyInput, value, currencyOutput):
             #print(outcome)
             return rate
         else:
-            return 0
+            return "Local currency is not supported!"
     else:
-        return 0
+        return "Local Currency is not Supported!"
 
 
 def get_forecast(city):
@@ -237,7 +237,9 @@ def get_forecast(city):
         #      str(weather_description))
         return current_temperature, weather_description
     else:
-        print(" City Not Found ")
+        error1 = "City not Found!"
+        error2 = "City not Found!"
+        return error1, error2
 
 def get_acceptedCurrencies():
     rates = get_currencyRates()

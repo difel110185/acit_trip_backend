@@ -133,7 +133,9 @@ def get_trip(id):
             "description"   :   trip[0][2],
             "image"         :   trip[0][3],
             "country"       :   country_obj,
-            "cities"        :   cities_list
+            "cities"        :   cities_list,
+            "currency"      :   scraper.api_get_currency("Canada", 1, country_obj["name"]),
+            "currencies"    :   scraper.get_currencyRates()
         }
 
         return ret_obj, 200
