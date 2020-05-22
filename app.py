@@ -7,6 +7,7 @@ import db
 import scraper
 import jwt
 import six
+import amenitites
 from werkzeug.exceptions import Unauthorized
 
 auth_config = {
@@ -115,6 +116,7 @@ def get_trip(id):
                 }
         cities_list = []
         for city in cities:
+            yelp = amenitites.info(city[1])
             temp, temp_desc = scraper.get_forecast(city[1])
             obj = {
                 "id"                    : city[0],
@@ -122,7 +124,13 @@ def get_trip(id):
                 "datetime_of_arrival"   : city[2].strftime("%Y-%m-%d %H:%M:%S"),
                 "datetime_of_departure" : city[3].strftime("%Y-%m-%d %H:%M:%S"),
                 "temperature_in_kelvin": temp,
-                "temp_desc": temp_desc
+                "temp_desc": temp_desc,
+                "location": yelp["location"],
+                "yelpname": yelp["name"],
+                "phone": yelp["phone"],
+                "price": yelp["price"],
+                "rating": yelp["rating"],
+                "url": yelp["url"]
             }
             cities_list.append(obj)
 

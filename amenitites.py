@@ -53,9 +53,9 @@ BUSINESS_PATH = '/v3/businesses/'  # Business ID will come after slash.
 
 
 # Defaults for our simple example.
-DEFAULT_TERM = 'dinner'
-DEFAULT_LOCATION = 'San Francisco, CA'
-SEARCH_LIMIT = 3
+DEFAULT_TERM = 'Lunch'
+#DEFAULT_LOCATION = 'Vancouver'
+SEARCH_LIMIT = 1
 
 
 def request(host, path, api_key, url_params=None):
@@ -76,7 +76,7 @@ def request(host, path, api_key, url_params=None):
         'Authorization': 'Bearer %s' % api_key,
     }
 
-    print(u'Querying {0} ...'.format(url))
+    #print(u'Querying {0} ...'.format(url))
 
     response = requests.request('GET', url, headers=headers, params=url_params)
 
@@ -123,21 +123,42 @@ def query_api(term, location):
     businesses = response.get('businesses')
 
     if not businesses:
-        print(u'No businesses for {0} in {1} found.'.format(term, location))
+        #print(u'No businesses for {0} in {1} found.'.format(term, location))
         return
 
     business_id = businesses[0]['id']
 
-    print(u'{0} businesses found, querying business info ' \
-        'for the top result "{1}" ...'.format(
-            len(businesses), business_id))
+    #print(u'{0} businesses found, querying business info ' \
+        #'for the top result "{1}" ...'.format(
+         #   len(businesses), business_id))
     response = get_business(API_KEY, business_id)
 
-    print(u'Result for business "{0}" found:'.format(business_id))
-    pprint.pprint(response, indent=2)
+    #print(u'Result for business "{0}" found:'.format(business_id))
+    #pprint.pprint(response, indent=2)
+    try:
+        temp = response["location"]
+        info = {
+            "location": temp["address1"],
+            "name": response["name"],
+            "phone": response["phone"],
+            "price": response["price"],
+            "rating": response["rating"],
+            "url": response["url"]
+        }
+        return info
+    except:
+        info = {
+            "location": "",
+            "name": "",
+            "phone": "",
+            "price": "",
+            "rating": "",
+            "url": ""
+        }
+        return info
 
 
-def main():
+def info(DEFAULT_LOCATION):
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-q', '--term', dest='term', default=DEFAULT_TERM,
@@ -149,7 +170,8 @@ def main():
     input_values = parser.parse_args()
 
     try:
-        query_api(input_values.term, input_values.location)
+        info = query_api(input_values.term, input_values.location)
+        return info
     except HTTPError as error:
         sys.exit(
             'Encountered HTTP error {0} on {1}:\n {2}\nAbort program.'.format(
@@ -159,6 +181,16 @@ def main():
             )
         )
 
+    info = {
+        "location": "",
+        "name": "",
+        "phone": "",
+        "price": "",
+        "rating": "",
+        "url": ""
+    }
+    return info
+
 
 if __name__ == '__main__':
-    main()
+    print("tomatoes")
