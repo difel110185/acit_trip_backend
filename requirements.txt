@@ -1,6 +1,6 @@
 connexion[swagger-ui]
 connexion>=2.7.0
-Flask_Cors==3.0.8
+Flask_Cors==3.0.9
 mysql-connector-python~=8.0.20
 requests~=2.23.0
 beautifulsoup4==4.9.0
